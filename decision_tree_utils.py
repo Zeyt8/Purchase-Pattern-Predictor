@@ -1,6 +1,7 @@
 from collections import Counter
 from copy import deepcopy
 from math import log2
+import numpy as np
 
 class Node:
     """ Representation for a node from the decision tree """
@@ -24,14 +25,10 @@ class Node:
 
 class MyDecisionTreeClassifier:
 
-    def __init__(self, Class, classes, attributes):
-        self.tree = None
-        self.Class = Class
-        self.classes = classes
-        self.attributes = attributes
-
     def fit(self, X, T):
-        self.tree = self.__id3(X, T, self.attributes, 3)
+        attributes = [a for a in X.columns if a != "Revenue"]
+        self.classes = np.unique(T)
+        self.tree = self.__id3(X, T, attributes, 3)
 
     def evaluate(self, example):
         if self.tree.children == {}:
@@ -42,11 +39,6 @@ class MyDecisionTreeClassifier:
             if val not in self.tree.children:
                 return None
             return self.evaluate(self.tree.children[val], example)
-
-    def print_metrics(self):
-        print('Accuracy: ', self.__accuracy(self.tree, self.P))
-        print('Precision: ', self.__precision(self.tree, self.P, '1'))
-        print('Recall: ', self.__recall(self.tree, self.P, '1'))
 
     def __id3(self, X, T, A, d = 6):
         if len(set([t for t in T])) == 1:
@@ -83,28 +75,3 @@ class MyDecisionTreeClassifier:
             X_val = [x for x in X if x[a] == val]
             gain -= len(X_val) / len(X) * self.__entropy(X_val)
         return gain
-
-    def __precision(self, tree, X, c):
-        prec = 0
-        predicted_ct = 0
-
-        for ex in X:
-            pred_c = self.evaluate(tree, ex)
-            if pred_c == c:
-                predicted_ct += 1
-                if ex[self.Class] == c:
-                    prec += 1
-
-        if predicted_ct != 0:
-            return prec / predicted_ct
-        return 0
-
-    def __recall(self, tree, X, c):
-        X_c = [x for x in X if x[self.Class] == c]
-        recall = len(list([x for x in X_c if self.evaluate(tree, x) == c]))
-        recall /= len(X_c)
-        return recall
-
-    def __accuracy(self, tree, X):
-        count = len(list(x for x in X if self.evaluate(tree, x) == x[self.Class]))
-        return 1.0 * count / len(X)
