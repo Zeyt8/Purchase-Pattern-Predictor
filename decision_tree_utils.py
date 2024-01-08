@@ -25,10 +25,12 @@ class Node:
 
 class MyDecisionTreeClassifier:
 
-    def fit(self, X, T):
-        attributes = [a for a in X.columns if a != "Revenue"]
+    def __init__(self, df, T):
+        self.attributes = [a for a in df.columns if a != "Revenue"]
         self.classes = np.unique(T)
-        self.tree = self.__id3(X, T, attributes, 3)
+
+    def fit(self, X, T):
+        self.tree = self.__id3(X, T, self.attributes, 3)
 
     def evaluate(self, example):
         if self.tree.children == {}:
