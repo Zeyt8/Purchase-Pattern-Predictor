@@ -17,12 +17,14 @@ class Node:
 
 class MyDecisionTreeClassifier:
 
+    max_depth: int = 3
+
     def __init__(self, df, Class):
         self.df = df
         self.Class = Class
 
     def fit(self, X, T) -> None:
-        self.tree = self.__id3(self.df, self.df.drop(self.Class, axis=1).columns, 3)
+        self.tree = self.__id3(self.df, self.df.drop(self.Class, axis=1).columns, self.max_depth)
 
     def predict(self, X) -> npt.NDArray[np.bool_]:
         results = np.empty(len(X), dtype=np.bool_)
