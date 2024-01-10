@@ -19,7 +19,6 @@ def show_numerical_attribute_distribution(numerical_attributes: pd.Series, index
         for p in range (0, 10):
             percentile = min_value + (max_value - min_value) * p / 10
             next_percentile = min_value + (max_value - min_value) * (p + 1) / 10
-            # how many values are less than or equal to the percentile
             count = numerical_attributes[(numerical_attributes[attribute] >= percentile) & (numerical_attributes[attribute] <= next_percentile)][attribute].count()
             counts.append(count)
         plt.figure(figsize=(6, 4))
